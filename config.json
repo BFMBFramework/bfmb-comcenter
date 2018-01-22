@@ -1,10 +1,14 @@
 {
 	"network" : {
 		"type" : "tcp",
-		"socket" : "",
+		"unixSocket" : "",
 		"host" : "127.0.0.1",
 		"port" : 10000,
-		"maxConnections" : 20
+		"maxConnections" : 20,
+		"crypto" : {
+			"enable" : true,
+			
+		}
 	},
 	"modules" : [
 		"telegram",
