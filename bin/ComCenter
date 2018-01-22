@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+export COMCENTER_HOST='127.0.0.1'
+export COMCENTER_PORT=10000 
+
+node $(dirname $(readlink -f $0))/../server.js
