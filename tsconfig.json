@@ -1,6 +1,7 @@
 {
     "files": [
         "src/main.ts",
+        "src/methods.ts",
         "src/jayson.d.ts"
     ],
     "compilerOptions": {

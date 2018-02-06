@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/BFMBFramework/ComCenter#readme",
   "dependencies": {
+    "@types/winston": "^2.3.7",
     "jayson": "^2.0.5",
     "winston": "^2.4.0"
   },

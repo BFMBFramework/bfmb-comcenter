@@ -1,7 +1,7 @@
 var jayson = require('jayson');
 
 // create a client
-var client = jayson.client.http({
+var client = jayson.client.tcp({
   port: 3000
 });
 
