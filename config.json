@@ -1,13 +1,6 @@
 {
-	"network" : {
-		"type" : "tcp",
-		"socket" : "",
-		"host" : "127.0.0.1",
-		"port" : 10000,
-		"maxConnections" : 20
-	},
-	"modules" : [
-		"telegram",
-		"rpigpio"
-	]
+	"server": {
+		"type": "tcp",
+		"port": 3000
+	}
 }
