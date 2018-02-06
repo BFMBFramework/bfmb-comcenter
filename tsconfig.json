@@ -1,0 +1,12 @@
+{
+    "files": [
+        "src/main.ts",
+        "src/jayson.d.ts"
+    ],
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "target": "es5",
+        "moduleResolution": "node",
+    	"module": "commonjs"
+    }
+}
