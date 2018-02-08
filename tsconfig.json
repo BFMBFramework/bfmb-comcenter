@@ -2,7 +2,7 @@
     "files": [
         "src/main.ts",
         "src/methods.ts",
-        "src/jayson.d.ts"
+        "src/ext/jayson.d.ts"
     ],
     "compilerOptions": {
         "noImplicitAny": true,

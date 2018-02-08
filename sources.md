@@ -17,3 +17,8 @@ https://github.com/tedeh/jayson
 http://jsonrpc.org/spec.html
 
 https://www.typescriptlang.org/
+
+## Autenticación en la API mediante usuarios y JSON webtokens.
+
+https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
+

@@ -1,6 +1,22 @@
 {
-	"server": {
-		"type": "tcp",
-		"port": 3000
-	}
+	"db": "mongodb://localhost/comcenter",
+	"secret": "W]5!>v$@NV!bgk8T?{$vP~o'^9P}S1",
+	"servers": [
+		{
+			"type": "tcp",
+			"port": 3000
+		},
+		{
+			"type": "http",
+			"port": 3001
+		},
+		{
+			"type": "https",
+			"port": 3002
+		},
+		{
+			"type": "tls",
+			"port": 3003
+		}
+	]
 }

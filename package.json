@@ -5,7 +5,8 @@
   "main": "./dist/main.js",
   "scripts": {
     "start": "node ./dist/main.js",
-    "test": "node ./test/test-jayson.js"
+    "test": "node ./test/test-jayson.js",
+    "build": "gulp"
   },
   "repository": {
     "type": "git",
@@ -21,8 +22,12 @@
   },
   "homepage": "https://github.com/BFMBFramework/ComCenter#readme",
   "dependencies": {
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/mongoose": "^5.0.1",
     "@types/winston": "^2.3.7",
     "jayson": "^2.0.5",
+    "jsonwebtoken": "^8.1.1",
+    "mongoose": "^5.0.3",
     "winston": "^2.4.0"
   },
   "devDependencies": {
