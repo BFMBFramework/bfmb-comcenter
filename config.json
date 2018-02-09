@@ -18,5 +18,7 @@
 			"type": "tls",
 			"port": 3003
 		}
+	],
+	"modules": [
 	]
 }

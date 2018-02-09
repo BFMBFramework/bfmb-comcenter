@@ -1,8 +1,13 @@
 {
     "files": [
+        "src/ext/jayson.d.ts",
         "src/main.ts",
         "src/methods.ts",
-        "src/ext/jayson.d.ts"
+        "src/lib/auth.ts",
+        "src/lib/logger.ts",
+        "src/lib/config.ts",
+        "src/interfaces/user.ts",
+        "src/schemas/user.ts"
     ],
     "compilerOptions": {
         "noImplicitAny": true,

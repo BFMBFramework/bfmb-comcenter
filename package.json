@@ -22,9 +22,6 @@
   },
   "homepage": "https://github.com/BFMBFramework/ComCenter#readme",
   "dependencies": {
-    "@types/jsonwebtoken": "^7.2.5",
-    "@types/mongoose": "^5.0.1",
-    "@types/winston": "^2.3.7",
     "jayson": "^2.0.5",
     "jsonwebtoken": "^8.1.1",
     "mongoose": "^5.0.3",
@@ -33,6 +30,10 @@
   "devDependencies": {
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.4",
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/mongodb": "^3.0.5",
+    "@types/mongoose": "^5.0.1",
+    "@types/winston": "^2.3.7",
     "typescript": "^2.7.1"
   }
 }

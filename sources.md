@@ -16,9 +16,18 @@ https://github.com/tedeh/jayson
 
 http://jsonrpc.org/spec.html
 
+http://www.jsonrpc.org/specification
+
 https://www.typescriptlang.org/
 
 ## Autenticación en la API mediante usuarios y JSON webtokens.
 
 https://scotch.io/tutorials/authenticate-a-node-js-api-with-json-web-tokens
 
+http://brianflove.com/2016/10/04/typescript-declaring-mongoose-schema-model/
+
+## Ruta de mejora.
+
+### En tema de seguridad.
+
+https://security.stackexchange.com/questions/133239/what-is-the-specific-reason-to-prefer-bcrypt-or-pbkdf2-over-sha256-crypt-in-pass
