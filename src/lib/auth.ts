@@ -1,14 +1,18 @@
 import * as jwt from "jsonwebtoken";
 
+import {INetworkModel, Network} from "../schemas/network";
 import {IUserModel, User} from "../schemas/user";
+
 import {logger} from "./logger";
 import {config} from "./config";
 
-function authenticate(username : string, password : string, callback : any) : any {
+// JSON-RPC
+function authenticate(username : string, password : string, callback : Function) {
 	User.findOne({
 		name: username
-	}, 
-	function (err, user : IUserModel ) {
+	})
+	.populate({ path: "networks", model: Network })
+	.exec( function (err, user : IUserModel ) {
 		if (err) throw err;
 		if (!user) {
 			// User not found.
@@ -21,13 +25,33 @@ function authenticate(username : string, password : string, callback : any) : an
 				callback({code: 301, message: "Password for user " + username + " is not correct."});
 			} else {
 				// Success.
-				let token = jwt.sign({}, config.secret, {
+				const payload = {
+					networks: user.networks
+				};
+
+				let token = jwt.sign(payload, config.secret, {
 					expiresIn: "24h"
 				});
+				logger.debug("Sending token to user...");
 				callback(null, token);
 			}
 		}
 	});
 }
 
-export {authenticate};
+// No JSON-RPC
+function verifyToken(token : string, callback : Function) {
+	if (token) {
+		jwt.verify(token, config.secret, function (err : Error, decoded : string) {
+			if (err) {
+				callback(err);
+			} else {
+				callback(null, decoded);
+			}
+		});
+	} else {
+		callback(new Error("Token not found."));
+	}
+}
+
+export {authenticate, verifyToken};

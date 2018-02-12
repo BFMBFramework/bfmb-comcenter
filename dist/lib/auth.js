@@ -1,13 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var jwt = require("jsonwebtoken");
+var network_1 = require("../schemas/network");
 var user_1 = require("../schemas/user");
 var logger_1 = require("./logger");
 var config_1 = require("./config");
+// JSON-RPC
 function authenticate(username, password, callback) {
     user_1.User.findOne({
         name: username
-    }, function (err, user) {
+    })
+        .populate({ path: "networks", model: network_1.Network })
+        .exec(function (err, user) {
         if (err)
             throw err;
         if (!user) {
@@ -23,7 +27,10 @@ function authenticate(username, password, callback) {
             }
             else {
                 // Success.
-                var token = jwt.sign({}, config_1.config.secret, {
+                var payload = {
+                    networks: user.networks
+                };
+                var token = jwt.sign(payload, config_1.config.secret, {
                     expiresIn: "24h"
                 });
                 callback(null, token);
@@ -32,3 +39,20 @@ function authenticate(username, password, callback) {
     });
 }
 exports.authenticate = authenticate;
+// No JSON-RPC
+function verifyToken(token, callback) {
+    if (token) {
+        jwt.verify(token, config_1.config.secret, function (err, decoded) {
+            if (err) {
+                callback(err);
+            }
+            else {
+                callback(null, decoded);
+            }
+        });
+    }
+    else {
+        callback(new Error("Token not found."));
+    }
+}
+exports.verifyToken = verifyToken;

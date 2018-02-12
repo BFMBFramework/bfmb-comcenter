@@ -6,7 +6,8 @@ export interface IUserModel extends IUser, Document {}
 export let UserSchema : Schema = new Schema({
 	createdAt: Date,
 	name: String,
-	password: String
+	password: String,
+	networks: [{ type: Schema.Types.ObjectId, ref: "Network"}]
 });
 
 UserSchema.pre("save", function (next) {

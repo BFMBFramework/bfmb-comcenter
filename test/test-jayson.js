@@ -8,5 +8,9 @@ var client = jayson.client.tcp({
 // invoke "add"
 client.request('authenticate', {username: "TEST", password: "test"}, function(err, response) {
   if(err) throw err;
-  console.log(response); // 2
+  console.log(response);
+  client.request('verifyToken', {token: response.result}, function(err, response) {
+  	console.log(response);
+  })
 });
+
