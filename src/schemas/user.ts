@@ -10,7 +10,7 @@ export let UserSchema : Schema = new Schema({
 	networks: [{ type: Schema.Types.ObjectId, ref: "Network"}]
 });
 
-UserSchema.pre("save", function (next) {
+UserSchema.pre("save", (next) => {
 	let now = new Date();
 	if (!this.createdAt) {
 		this.createdAt = now;

@@ -1,10 +1,9 @@
-import {authenticate, verifyToken} from "./lib/auth";
+import {authenticate} from "./lib/auth";
+import {sendMessage} from "./lib/messages";
 
 const apiEndpoints : any = {
 	authenticate,
-	add: function(args : Array<number>, callback : any) : any {
-		callback(null, args[0] + args[1]);
-	}
+	sendMessage
 };
 
 export { apiEndpoints };

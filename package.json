@@ -6,7 +6,9 @@
   "scripts": {
     "start": "node ./dist/main.js",
     "test": "node ./test/test-jayson.js",
-    "build": "gulp"
+    "build": "gulp",
+    "clean": "rm -rf ./dist",
+    "rebuild": "npm run clean && npm run build"
   },
   "repository": {
     "type": "git",

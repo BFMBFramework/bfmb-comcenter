@@ -33,6 +33,7 @@ function authenticate(username, password, callback) {
                 var token = jwt.sign(payload, config_1.config.secret, {
                     expiresIn: "24h"
                 });
+                logger_1.logger.debug("Sending token to user...");
                 callback(null, token);
             }
         }

@@ -3,9 +3,9 @@ var config = require('../config.json');
 var User = require('../dist/schemas/user').User;
 var Network = require('../dist/schemas/network').Network;
 
-mongoose.connect(config.db, {}, function (err) {
-	console.log("Can't connect with mongodb.");
-});
+mongoose.connect(config.db);
+
+if (!process.env.TELEGRAM_TOKEN) throw new Error("No Telegram token defined.");
 
 var test = new User({
 	name: 'TEST',
@@ -17,7 +17,7 @@ test.save(function (err) {
 
 	var network = new Network({
 		name: 'Telegram',
-		token: '521610674:AAEJA6es-CkKtaAJWIdQwNP_M-vA5TL6kdA'
+		token: process.env.TELEGRAM_TOKEN
 	});
 
 	network.save(function (err) {
@@ -27,6 +27,7 @@ test.save(function (err) {
 
 	test.networks.push(network);
 	test.save(function (err) {
+		if (err) throw err;
 		console.log("Added test user.");
 	});
 });
