@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/BFMBFramework/ComCenter#readme",
   "dependencies": {
+    "bfmb-telegram-connector": "0.0.0",
     "jayson": "^2.0.5",
     "jsonwebtoken": "^8.1.1",
     "mongoose": "^5.0.3",

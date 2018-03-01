@@ -6,6 +6,7 @@
         "src/lib/auth.ts",
         "src/lib/logger.ts",
         "src/lib/config.ts",
+        "src/lib/package.ts",
         "src/lib/messages.ts",
         "src/interfaces/user.ts",
         "src/interfaces/network.ts",

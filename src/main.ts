@@ -5,18 +5,11 @@ import * as mongoose from "mongoose";
 import { apiEndpoints } from "./methods";
 import { logger } from "./lib/logger";
 import { config } from "./lib/config";
-
-const softVer : string = "0.0.0";
-
-let server;
-
-logger.info("Welcome to BFMB ComCenter " + softVer);
-
-// Connection to mongodb
-logger.info("Connecting to mongodb...");
-mongoose.connect(config.db, {}).then(mongoSuccessful,(err) => { throw err; });
+import { packageData } from "./lib/package";
 
 function mongoSuccessful() {
+	let server;
+	
 	logger.info("Connected to mongodb database");
 
 	// create a server
@@ -54,3 +47,17 @@ function mongoSuccessful() {
 		}
 	}
 }
+
+function mongoError(err : Error) {
+	logger.error(err.message);
+}
+
+function main() {
+	logger.info("Welcome to BFMB ComCenter " + packageData.version);
+
+	// Connection to mongodb
+	logger.info("Connecting to mongodb...");
+	mongoose.connect(config.db, {}).then(mongoSuccessful,mongoError);
+}
+
+main();

@@ -1,6 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var auth_1 = require("./auth");
+var config_1 = require("./config");
+var connectors = [];
+for (var _i = 0, _a = config_1.config.modules; _i < _a.length; _i++) {
+    var mod = _a[_i];
+    connectors.push(require(mod[0].toUpperCase() + mod.substring(1) + "Connector"));
+}
 function sendMessage(token, network, destination, content, callback) {
     auth_1.verifyToken(token, function (err, decoded) {
         if (err) {
