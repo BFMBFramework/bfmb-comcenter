@@ -3,15 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var jayson = require("jayson");
 var fs = require("fs");
 var mongoose = require("mongoose");
-var methods_1 = require("./methods");
 var logger_1 = require("./lib/logger");
 var config_1 = require("./lib/config");
 var package_1 = require("./lib/package");
+var auth_1 = require("./lib/auth");
+var messages_1 = require("./lib/messages");
 function mongoSuccessful() {
     var server;
     logger_1.logger.info("Connected to mongodb database");
     // create a server
-    server = jayson.server(methods_1.apiEndpoints, { collect: false });
+    server = jayson.server({
+        authenticate: auth_1.AuthHandler.authenticate,
+        sendMessage: messages_1.MessageHandler.sendMessage
+    }, {
+        collect: false
+    });
     for (var _i = 0, _a = config_1.config.servers; _i < _a.length; _i++) {
         var elem = _a[_i];
         logger_1.logger.info("Raising " + elem.type + " server on port " + elem.port);

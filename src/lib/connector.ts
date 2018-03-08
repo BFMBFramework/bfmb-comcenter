@@ -1,7 +1,7 @@
 import {config} from "./config";
 
 export class ConnectorManager {
-	connectors : Array<any>;
+	private connectors : Array<any>;
 
 	constructor() {
 		for(let mod of config.modules) {

@@ -1,41 +1,30 @@
-import {verifyToken} from "./auth";
 import {logger} from "./logger";
 import {config} from "./config";
+import {AuthHandler} from "./auth";
 import {conManager} from "./global";
 
-function sendMessage (token : string, network : string, destination : string, content : string, callback : Function) {
-	verifyToken(token, function (err : Error, decoded : any) {
-		if (err) {
-			callback({code: 399, message: "Auth error. -> " + err.message}); // TODO: Putting error json.
-		} else {
-			if (tokenHasNetwork(network, decoded.networks)) {
-				let connector = 
+export class MessageHandler {
+	static sendMessage (token : string, network : string, destination : string, content : string, callback : Function) {
+		AuthHandler.verifyToken(token, function (err : Error, decoded : any) {
+			if (err) {
+				callback({code: 399, message: "Auth error. -> " + err.message});
 			} else {
-				callback({code: 400, message: "Network " + network + " not found in user network list."});
+				if (MessageHandler.tokenHasNetwork(network, decoded.networks)) {
+					let connector = conManager.getConnector(network);
+				} else {
+					callback({code: 400, message: "Network " + network + " not found in user network list."});
+				}
 			}
-		}
-	});
-}
-
-// All broadcasting must be limited messages per second.
-function broadcastByNet (token : string, network : string, content : string, callback : Function) {
-
-}
-
-function broadcastAll (token: string, content : string, callback : Function) {
-
-}
-
-// PRIVATE FUNCTIONS
-
-function tokenHasNetwork (network : string, networks : Array<any>) : boolean {
-	for(let netCandidate of networks) {
-		if(netCandidate === network) {
-			return true;
-		}
+		});
 	}
 
-	return false;
-}
+	static tokenHasNetwork (network : string, networks : Array<any>) : boolean {
+		for(let netCandidate of networks) {
+			if(netCandidate === network) {
+				return true;
+			}
+		}
 
-export { sendMessage, broadcastByNet, broadcastAll };
+		return false;
+	}
+}

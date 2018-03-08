@@ -2,10 +2,12 @@ import * as jayson from "jayson";
 import * as fs from "fs";
 import * as mongoose from "mongoose";
 
-import { apiEndpoints } from "./methods";
 import { logger } from "./lib/logger";
 import { config } from "./lib/config";
 import { packageData } from "./lib/package";
+
+import { AuthHandler } from "./lib/auth";
+import { MessageHandler } from "./lib/messages";
 
 function mongoSuccessful() {
 	let server;
@@ -13,7 +15,12 @@ function mongoSuccessful() {
 	logger.info("Connected to mongodb database");
 
 	// create a server
-	server = jayson.server(apiEndpoints, { collect: false });
+	server = jayson.server({
+		authenticate : AuthHandler.authenticate,
+		sendMessage : MessageHandler.sendMessage
+	}, {
+		collect: false
+	});
 
 	for (let elem of config.servers) {
 		logger.info("Raising " + elem.type + " server on port " + elem.port);
