@@ -1,0 +1,6 @@
+# Ignore on publish
+node_modules/
+src/
+gulpfile.js
+sources.md
+tsconfig.json
