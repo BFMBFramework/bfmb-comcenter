@@ -1,6 +1,6 @@
 {
   "name": "bfmb-comcenter",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Communications central server for BFMB Framework",
   "main": "./dist/main.js",
   "scripts": {
