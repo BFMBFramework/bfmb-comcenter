@@ -3,7 +3,7 @@ import * as uuidv1 from "uuid/v1";
 import {config} from "./config";
 
 export class ConnectorManager {
-	private connectors : Array<Connector>;
+	protected connectors : Array<Connector>;
 
 	constructor() {
 		for(let mod of config.modules) {
@@ -26,8 +26,8 @@ export class ConnectorManager {
 }
 
 export abstract class Connector {
-	private name : string;
-	private connections : Array<Connection>;
+	protected name : string;
+	protected connections : Array<Connection>;
 
 	constructor(name : string) {
 		this.name = name;
@@ -68,9 +68,9 @@ export abstract class Connector {
 }
 
 export abstract class Connection {
-	private id : string;
+	protected id : string;
 
-	constructor (token : string) {
+	constructor (options : any) {
 		this.id = uuidv1();
 	}
 
