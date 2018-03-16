@@ -3,18 +3,20 @@ import * as uuidv1 from "uuid/v1";
 import {config} from "./config";
 
 export class ConnectorManager {
-	private connectors : Array<any>;
+	private connectors : Array<Connector>;
 
 	constructor() {
 		for(let mod of config.modules) {
-			let connector = require("bfmb-" + mod + "-connector");
-			this.connectors.push(new connector());
+			const self = this;
+			const connector = import("bfmb-" + mod + "-connector").then(function (connector) {
+				self.connectors.push(new connector());
+			});
 		}
 	}
 
 	getConnector(name : string) : any {
 		for(let connector of this.connectors) {
-			if(connector.name === name) {
+			if(connector.getName() === name) {
 				return connector;
 			}
 		}

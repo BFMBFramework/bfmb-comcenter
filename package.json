@@ -15,7 +15,9 @@
     "url": "git+https://github.com/BFMBFramework/ComCenter.git"
   },
   "keywords": [
-    "sockets"
+    "comcenter",
+    "sockets",
+    "jsonrpc"
   ],
   "author": "Ángel González",
   "license": "MIT",

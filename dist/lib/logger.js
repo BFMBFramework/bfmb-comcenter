@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var winston = require("winston");
-var path = require("path");
-var logLevel = process.env.LOGLEVEL || "info";
-var logRoute = process.env.LOGFILE || path.resolve("./comcenter.log");
+const winston = require("winston");
+const path = require("path");
+const logLevel = process.env.LOGLEVEL || "info";
+const logRoute = process.env.LOGFILE || path.resolve("./comcenter.log");
 // Loading winston (logger)
 exports.logger = new winston.Logger({
     level: logLevel,

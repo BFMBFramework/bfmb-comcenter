@@ -1,15 +1,15 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var jayson = require("jayson");
-var fs = require("fs");
-var mongoose = require("mongoose");
-var logger_1 = require("./lib/logger");
-var config_1 = require("./lib/config");
-var package_1 = require("./lib/package");
-var auth_1 = require("./lib/auth");
-var messages_1 = require("./lib/messages");
+const jayson = require("jayson");
+const fs = require("fs");
+const mongoose = require("mongoose");
+const logger_1 = require("./lib/logger");
+const config_1 = require("./lib/config");
+const package_1 = require("./lib/package");
+const auth_1 = require("./lib/auth");
+const messages_1 = require("./lib/messages");
 function mongoSuccessful() {
-    var server;
+    let server;
     logger_1.logger.info("Connected to mongodb database");
     // create a server
     server = jayson.server({
@@ -18,8 +18,7 @@ function mongoSuccessful() {
     }, {
         collect: false
     });
-    for (var _i = 0, _a = config_1.config.servers; _i < _a.length; _i++) {
-        var elem = _a[_i];
+    for (let elem of config_1.config.servers) {
         logger_1.logger.info("Raising " + elem.type + " server on port " + elem.port);
         switch (elem.type) {
             case "tcp":
