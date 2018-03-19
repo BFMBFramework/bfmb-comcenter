@@ -10,7 +10,7 @@ const auth_1 = require("./lib/auth");
 const messages_1 = require("./lib/messages");
 function mongoSuccessful() {
     let server;
-    logger_1.logger.info("Connected to mongodb database");
+    logger_1.logger.info("Connected to MongoDB database");
     // create a server
     server = jayson.server({
         authenticate: auth_1.AuthHandler.authenticate,
@@ -53,12 +53,25 @@ function mongoSuccessful() {
     }
 }
 function mongoError(err) {
-    logger_1.logger.error(err.message);
+    logger_1.logger.error("MongoDB connection error: " + err);
+}
+function mongoDisconnected() {
+    logger_1.logger.info("Disconnected from MongoDB");
+}
+function onSigInt() {
+    mongoose.connection.close(function () {
+        logger_1.logger.info("Exiting...");
+        process.exit(0);
+    });
 }
 function main() {
     logger_1.logger.info("Welcome to BFMB ComCenter " + package_1.packageData.version);
     // Connection to mongodb
-    logger_1.logger.info("Connecting to mongodb...");
-    mongoose.connect(config_1.config.db, {}).then(mongoSuccessful, mongoError);
+    logger_1.logger.info("Connecting to MongoDB...");
+    mongoose.connect(config_1.config.db);
+    mongoose.connection.on("connected", mongoSuccessful);
+    mongoose.connection.on("error", mongoError);
+    mongoose.connection.on("disconnected", mongoDisconnected);
+    process.on("SIGINT", onSigInt);
 }
 main();

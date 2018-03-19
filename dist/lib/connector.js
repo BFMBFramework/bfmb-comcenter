@@ -21,6 +21,7 @@ class ConnectorManager {
     }
 }
 exports.ConnectorManager = ConnectorManager;
+exports.connectorManager = new ConnectorManager();
 class Connector {
     constructor(name) {
         this.name = name;
@@ -53,7 +54,7 @@ class Connector {
 }
 exports.Connector = Connector;
 class Connection {
-    constructor(token) {
+    constructor(options) {
         this.id = uuidv1();
     }
     getId() {

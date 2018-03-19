@@ -5,7 +5,7 @@ import {IUserModel, User} from "../schemas/user";
 
 import {logger} from "./logger";
 import {config} from "./config";
-import {conManager} from "./global";
+import {connectorManager} from "./connector";
 
 export class AuthHandler {
 	static authenticate(username : string, password : string, callback : Function) {
@@ -29,7 +29,7 @@ export class AuthHandler {
 					const connections : Array<string> = [];
 
 					for (let network of user.networks) {
-						let connector = conManager.getConnector(network.name);
+						let connector = connectorManager.getConnector(network.name);
 						if(connector) {
 							connector.addConnection(network.token, function (err : Error, id : string) {
 								if (err) {
@@ -82,7 +82,7 @@ export class AuthHandler {
 			let decoded : any = jwt.decode(token);
 			let payload : any = decoded.payload;
 			for (let i = 0; i < payload.networks.length; i++) {
-				let connector = conManager.getConnector(payload.networks[i].name);
+				let connector = connectorManager.getConnector(payload.networks[i].name);
 				if (connector && payload.connections[i]) {
 					connector.removeConnection(payload.connections[i], function (err : Error) {
 						if (err) {

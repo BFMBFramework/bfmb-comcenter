@@ -5,7 +5,7 @@ const network_1 = require("../schemas/network");
 const user_1 = require("../schemas/user");
 const logger_1 = require("./logger");
 const config_1 = require("./config");
-const global_1 = require("./global");
+const connector_1 = require("./connector");
 class AuthHandler {
     static authenticate(username, password, callback) {
         user_1.User.findOne({
@@ -30,7 +30,7 @@ class AuthHandler {
                     // Creating connections
                     const connections = [];
                     for (let network of user.networks) {
-                        let connector = global_1.conManager.getConnector(network.name);
+                        let connector = connector_1.connectorManager.getConnector(network.name);
                         if (connector) {
                             connector.addConnection(network.token, function (err, id) {
                                 if (err) {
@@ -81,7 +81,7 @@ class AuthHandler {
             let decoded = jwt.decode(token);
             let payload = decoded.payload;
             for (let i = 0; i < payload.networks.length; i++) {
-                let connector = global_1.conManager.getConnector(payload.networks[i].name);
+                let connector = connector_1.connectorManager.getConnector(payload.networks[i].name);
                 if (connector && payload.connections[i]) {
                     connector.removeConnection(payload.connections[i], function (err) {
                         if (err) {

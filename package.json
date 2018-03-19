@@ -26,21 +26,21 @@
   },
   "homepage": "https://github.com/BFMBFramework/ComCenter#readme",
   "dependencies": {
-    "bfmb-telegram-connector": "0.0.0",
+    "bfmb-telegram-connector": "0.0.2",
     "jayson": "^2.0.5",
-    "jsonwebtoken": "^8.1.1",
-    "mongoose": "^5.0.3",
+    "jsonwebtoken": "^8.2.0",
+    "mongoose": "^5.0.10",
     "uuid": "^3.2.1",
-    "winston": "^2.4.0"
+    "winston": "^2.4.1"
   },
   "devDependencies": {
-    "@types/jsonwebtoken": "^7.2.5",
-    "@types/mongodb": "^3.0.5",
-    "@types/mongoose": "^5.0.1",
+    "@types/jsonwebtoken": "^7.2.6",
+    "@types/mongodb": "^3.0.8",
+    "@types/mongoose": "^5.0.7",
     "@types/uuid": "^3.4.3",
-    "@types/winston": "^2.3.7",
+    "@types/winston": "^2.3.8",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.4",
-    "typescript": "^2.7.1"
+    "typescript": "^2.7.2"
   }
 }

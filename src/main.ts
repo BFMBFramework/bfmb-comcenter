@@ -12,7 +12,7 @@ import { MessageHandler } from "./lib/messages";
 function mongoSuccessful() {
 	let server;
 	
-	logger.info("Connected to mongodb database");
+	logger.info("Connected to MongoDB database");
 
 	// create a server
 	server = jayson.server({
@@ -56,15 +56,34 @@ function mongoSuccessful() {
 }
 
 function mongoError(err : Error) {
-	logger.error(err.message);
+	logger.error("MongoDB connection error: " + err);
+}
+
+function mongoDisconnected() {
+	logger.info("Disconnected from MongoDB")
+}
+
+function onSigInt() {
+	mongoose.connection.close(function() {
+		logger.info("Exiting...");
+		process.exit(0);
+	});
 }
 
 function main() {
 	logger.info("Welcome to BFMB ComCenter " + packageData.version);
 
 	// Connection to mongodb
-	logger.info("Connecting to mongodb...");
-	mongoose.connect(config.db, {}).then(mongoSuccessful,mongoError);
+	logger.info("Connecting to MongoDB...");
+	mongoose.connect(config.db);
+
+	mongoose.connection.on("connected", mongoSuccessful);
+
+	mongoose.connection.on("error", mongoError);
+
+	mongoose.connection.on("disconnected", mongoDisconnected);
+
+	process.on("SIGINT", onSigInt);
 }
 
 main();

@@ -3,7 +3,7 @@ import { IUser } from "../interfaces/user";
 
 export interface IUserModel extends IUser, Document {}
 
-export let UserSchema : Schema = new Schema({
+export const UserSchema : Schema = new Schema({
 	createdAt: Date,
 	name: String,
 	password: String,

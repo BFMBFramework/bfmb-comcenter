@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_1 = require("./auth");
-const global_1 = require("./global");
+const connector_1 = require("./connector");
 class MessageHandler {
     static sendMessage(token, network, destination, content, callback) {
         auth_1.AuthHandler.verifyToken(token, function (err, decoded) {
@@ -10,7 +10,7 @@ class MessageHandler {
             }
             else {
                 if (MessageHandler.tokenHasNetwork(network, decoded.networks)) {
-                    let connector = global_1.conManager.getConnector(network);
+                    let connector = connector_1.connectorManager.getConnector(network);
                 }
                 else {
                     callback({ code: 400, message: "Network " + network + " not found in user network list." });

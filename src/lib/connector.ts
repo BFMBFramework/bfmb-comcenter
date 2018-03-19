@@ -25,6 +25,8 @@ export class ConnectorManager {
 	}
 }
 
+export const connectorManager = new ConnectorManager();
+
 export abstract class Connector {
 	protected name : string;
 	protected connections : Array<Connection>;

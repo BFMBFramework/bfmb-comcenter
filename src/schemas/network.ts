@@ -3,9 +3,9 @@ import { INetwork } from "../interfaces/network";
 
 export interface INetworkModel extends INetwork, Document {}
 
-export let NetworkSchema : Schema = new Schema({
+export const NetworkSchema : Schema = new Schema({
 	name: String,
 	token: String
 });
 
-export const Network: Model<INetworkModel> = model<INetworkModel>("Network", NetworkSchema);
+export const Network : Model<INetworkModel> = model<INetworkModel>("Network", NetworkSchema);
