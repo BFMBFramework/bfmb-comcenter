@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const auth_1 = require("./auth");
 const connector_1 = require("./connector");
 class MessageHandler {
+    static startConnectorManager() {
+        connector_1.connectorManager.addConnectors();
+    }
     static sendMessage(token, network, destination, content, callback) {
         auth_1.AuthHandler.verifyToken(token, function (err, decoded) {
             if (err) {

@@ -11,6 +11,8 @@ const messages_1 = require("./lib/messages");
 function mongoSuccessful() {
     let server;
     logger_1.logger.info("Connected to MongoDB database");
+    logger_1.logger.info("Attaching connectors to Connector Manager");
+    messages_1.MessageHandler.startConnectorManager();
     // create a server
     server = jayson.server({
         authenticate: auth_1.AuthHandler.authenticate,

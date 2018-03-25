@@ -14,6 +14,9 @@ function mongoSuccessful() {
 	
 	logger.info("Connected to MongoDB database");
 
+	logger.info("Attaching connectors to Connector Manager");
+	MessageHandler.startConnectorManager();
+
 	// create a server
 	server = jayson.server({
 		authenticate : AuthHandler.authenticate,

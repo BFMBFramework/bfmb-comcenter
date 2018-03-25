@@ -4,6 +4,10 @@ import {AuthHandler} from "./auth";
 import {connectorManager} from "./connector";
 
 export class MessageHandler {
+	static startConnectorManager () {
+		connectorManager.addConnectors();
+	}
+
 	static sendMessage (token : string, network : string, destination : string, content : string, callback : Function) {
 		AuthHandler.verifyToken(token, function (err : Error, decoded : any) {
 			if (err) {
