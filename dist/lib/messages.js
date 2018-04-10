@@ -1,33 +1,66 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const auth_1 = require("./auth");
+const AuthHandler = require("./auth");
 const connector_1 = require("./connector");
-class MessageHandler {
-    static startConnectorManager() {
-        connector_1.connectorManager.addConnectors();
-    }
-    static sendMessage(token, network, destination, content, callback) {
-        auth_1.AuthHandler.verifyToken(token, function (err, decoded) {
-            if (err) {
-                callback({ code: 399, message: "Auth error. -> " + err.message });
-            }
-            else {
-                if (MessageHandler.tokenHasNetwork(network, decoded.networks)) {
-                    let connector = connector_1.connectorManager.getConnector(network);
+function startConnectorManager() {
+    connector_1.connectorManager.addConnectors();
+}
+exports.startConnectorManager = startConnectorManager;
+function sendMessage(token, network, options, callback) {
+    // RPC token verification
+    AuthHandler.verifyToken(token, function (err, decoded) {
+        if (err) {
+            return callback({ code: 399, message: "Auth error. -> " + err.message });
+        }
+        else {
+            // Check if network selected is configured for this user
+            let connectionIndex = tokenHasNetwork(network, decoded.networks);
+            if (connectionIndex > -1) {
+                // Get connector
+                let connector = connector_1.connectorManager.getConnector(network);
+                if (connector) {
+                    connector.sendMessage(decoded.connections[connectionIndex], options, function (err, response) {
+                        if (err) {
+                            return callback({ code: 402, message: err.message });
+                        }
+                        else {
+                            return callback(null, response);
+                        }
+                    });
                 }
                 else {
-                    callback({ code: 400, message: "Network " + network + " not found in user network list." });
+                    return callback({ code: 401, message: "Network module " + network + " is not activated." });
                 }
             }
-        });
-    }
-    static tokenHasNetwork(network, networks) {
-        for (let netCandidate of networks) {
-            if (netCandidate === network) {
-                return true;
+            else {
+                return callback({ code: 400, message: "Network " + network + " not found in user network list." });
             }
         }
-        return false;
-    }
+    });
 }
-exports.MessageHandler = MessageHandler;
+exports.sendMessage = sendMessage;
+function receiveMessage(token, network, callback) {
+    AuthHandler.verifyToken(token, function (err, decoded) {
+        if (err) {
+            return callback({ code: 399, message: "Auth error. -> " + err.message });
+        }
+        else {
+            if (tokenHasNetwork(network, decoded.networks)) {
+                let connector = connector_1.connectorManager.getConnector(network);
+            }
+            else {
+                return callback({ code: 400, message: "Network " + network + " not found in user network list." });
+            }
+        }
+    });
+}
+exports.receiveMessage = receiveMessage;
+function tokenHasNetwork(network, networks) {
+    for (let i = 0; i < networks.length; i++) {
+        if (networks[i].name === network) {
+            return i;
+        }
+    }
+    return -1;
+}
+exports.tokenHasNetwork = tokenHasNetwork;

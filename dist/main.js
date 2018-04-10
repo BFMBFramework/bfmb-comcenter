@@ -6,17 +6,17 @@ const mongoose = require("mongoose");
 const logger_1 = require("./lib/logger");
 const config_1 = require("./lib/config");
 const package_1 = require("./lib/package");
-const auth_1 = require("./lib/auth");
-const messages_1 = require("./lib/messages");
+const AuthHandler = require("./lib/auth");
+const MessageHandler = require("./lib/messages");
 function mongoSuccessful() {
     let server;
     logger_1.logger.info("Connected to MongoDB database");
     logger_1.logger.info("Attaching connectors to Connector Manager");
-    messages_1.MessageHandler.startConnectorManager();
+    MessageHandler.startConnectorManager();
     // create a server
     server = jayson.server({
-        authenticate: auth_1.AuthHandler.authenticate,
-        sendMessage: messages_1.MessageHandler.sendMessage
+        authenticate: AuthHandler.authenticate,
+        sendMessage: MessageHandler.sendMessage
     }, {
         collect: false
     });

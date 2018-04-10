@@ -6,8 +6,8 @@ import { logger } from "./lib/logger";
 import { config } from "./lib/config";
 import { packageData } from "./lib/package";
 
-import { AuthHandler } from "./lib/auth";
-import { MessageHandler } from "./lib/messages";
+import * as AuthHandler from "./lib/auth";
+import * as MessageHandler from "./lib/messages";
 
 function mongoSuccessful() {
 	let server;
