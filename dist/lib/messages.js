@@ -39,14 +39,28 @@ function sendMessage(token, network, options, callback) {
     });
 }
 exports.sendMessage = sendMessage;
-function receiveMessage(token, network, callback) {
+function receiveMessage(token, network, options, callback) {
     AuthHandler.verifyToken(token, function (err, decoded) {
         if (err) {
             return callback({ code: 399, message: "Auth error. -> " + err.message });
         }
         else {
-            if (tokenHasNetwork(network, decoded.networks)) {
+            let connectionIndex = tokenHasNetwork(network, decoded.networks);
+            if (connectionIndex > -1) {
                 let connector = connector_1.connectorManager.getConnector(network);
+                if (connector) {
+                    connector.receiveMessage(decoded.connections[connectionIndex], options, function (err, response) {
+                        if (err) {
+                            return callback({ code: 402, message: err.message });
+                        }
+                        else {
+                            return callback(null, response);
+                        }
+                    });
+                }
+                else {
+                    return callback({ code: 401, message: "Network module " + network + " is not activated." });
+                }
             }
             else {
                 return callback({ code: 400, message: "Network " + network + " not found in user network list." });

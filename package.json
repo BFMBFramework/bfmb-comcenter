@@ -5,7 +5,7 @@
   "main": "./dist/main.js",
   "scripts": {
     "start": "node ./dist/main.js",
-    "test": "node ./test/test-jayson.js",
+    "test": "./node_modules/.bin/mocha",
     "build": "gulp",
     "clean": "rm -rf ./dist",
     "rebuild": "npm run clean && npm run build"

@@ -36,13 +36,25 @@ export function sendMessage (token : string, network : string, options : any, ca
 	});
 }
 
-export function receiveMessage (token : string, network : string, callback : Function) {
+export function receiveMessage (token : string, network : string, options : any, callback : Function) {
 	AuthHandler.verifyToken(token, function (err : Error, decoded : any) {
 		if (err) {
 			return callback({code: 399, message: "Auth error. -> " + err.message});
 		} else {
-			if (tokenHasNetwork(network, decoded.networks)) {
+			let connectionIndex = tokenHasNetwork(network, decoded.networks);
+			if (connectionIndex > -1) {
 				let connector = connectorManager.getConnector(network);
+				if (connector) {
+					connector.receiveMessage(decoded.connections[connectionIndex], options, function (err : Error, response : any) {
+						if (err) {
+							return callback({code: 402, message: err.message});
+						} else {
+							return callback(null, response);
+						}
+					});
+				} else {
+					return callback({code: 401, message: "Network module " + network + " is not activated."});
+				}
 			} else {
 				return callback({code: 400, message: "Network " + network + " not found in user network list."});
 			}

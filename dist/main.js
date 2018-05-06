@@ -16,7 +16,8 @@ function mongoSuccessful() {
     // create a server
     server = jayson.server({
         authenticate: AuthHandler.authenticate,
-        sendMessage: MessageHandler.sendMessage
+        sendMessage: MessageHandler.sendMessage,
+        receiveMessage: MessageHandler.receiveMessage
     }, {
         collect: false
     });
