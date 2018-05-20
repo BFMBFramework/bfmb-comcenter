@@ -28,7 +28,7 @@
   "dependencies": {
     "async": "^2.6.0",
     "bfmb-base-connector": "^0.2.2",
-    "bfmb-telegram-connector": "^0.2.3",
+    "bfmb-telegram-connector": "^0.3.0",
     "jayson": "^2.0.5",
     "jsonwebtoken": "^8.2.0",
     "mongoose": "^5.0.11",

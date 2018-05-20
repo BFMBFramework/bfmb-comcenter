@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var config = require('../config.json');
-var User = require('../dist/schemas/user').User;
-var Network = require('../dist/schemas/network').Network;
+var config = require('../../config.json');
+var User = require('../../dist/schemas/user').User;
+var Network = require('../../dist/schemas/network').Network;
 
 mongoose.connect(config.db);
 
