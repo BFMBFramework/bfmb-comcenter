@@ -6,7 +6,8 @@ import {IUserModel, User} from "../schemas/user";
 
 import {logger} from "./logger";
 import {config} from "./config";
-import {connectorManager} from "./connector";
+
+import { BFMBServer } from "./server";
 
 export function authenticate(username : string, password : string, callback : Function) {
 	User.findOne({
@@ -48,7 +49,8 @@ export function authenticate(username : string, password : string, callback : Fu
 }
 
 function addUserConnection(network : any, callback : Function) {
-	let connector = connectorManager.getConnector(network.name);
+	const bfmbServer = BFMBServer.sharedInstance;
+	const connector = bfmbServer.getConnectorManager().getConnector(network.name);
 
 	if (connector) {
 		connector.addConnection({token: network.token}, function (err : Error, id : string) {
@@ -80,11 +82,13 @@ export function verifyToken(token : string, callback : Function) {
 }
 
 export function closeOldTokenConnections(token : string) {
+	const bfmbServer = BFMBServer.sharedInstance;
+
 	if (token) {
 		let decoded : any = jwt.decode(token);
 		let payload : any = decoded.payload;
 		for (let i = 0; i < payload.networks.length; i++) {
-			let connector = connectorManager.getConnector(payload.networks[i].name);
+			let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
 			if (connector && payload.connections[i]) {
 				connector.removeConnection(payload.connections[i], function (err : Error) {
 					if (err) {

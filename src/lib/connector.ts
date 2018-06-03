@@ -31,6 +31,4 @@ export class ConnectorManager {
 
 }
 
-export const connectorManager = new ConnectorManager();
-
 

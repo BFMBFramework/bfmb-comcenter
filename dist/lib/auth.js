@@ -6,7 +6,7 @@ const network_1 = require("../schemas/network");
 const user_1 = require("../schemas/user");
 const logger_1 = require("./logger");
 const config_1 = require("./config");
-const connector_1 = require("./connector");
+const server_1 = require("./server");
 function authenticate(username, password, callback) {
     user_1.User.findOne({
         name: username
@@ -47,7 +47,8 @@ function authenticate(username, password, callback) {
 }
 exports.authenticate = authenticate;
 function addUserConnection(network, callback) {
-    let connector = connector_1.connectorManager.getConnector(network.name);
+    const bfmbServer = server_1.BFMBServer.sharedInstance;
+    const connector = bfmbServer.getConnectorManager().getConnector(network.name);
     if (connector) {
         connector.addConnection({ token: network.token }, function (err, id) {
             if (err) {
@@ -81,11 +82,12 @@ function verifyToken(token, callback) {
 }
 exports.verifyToken = verifyToken;
 function closeOldTokenConnections(token) {
+    const bfmbServer = server_1.BFMBServer.sharedInstance;
     if (token) {
         let decoded = jwt.decode(token);
         let payload = decoded.payload;
         for (let i = 0; i < payload.networks.length; i++) {
-            let connector = connector_1.connectorManager.getConnector(payload.networks[i].name);
+            let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
             if (connector && payload.connections[i]) {
                 connector.removeConnection(payload.connections[i], function (err) {
                     if (err) {

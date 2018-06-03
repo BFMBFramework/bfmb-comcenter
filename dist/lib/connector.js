@@ -23,4 +23,3 @@ class ConnectorManager {
     }
 }
 exports.ConnectorManager = ConnectorManager;
-exports.connectorManager = new ConnectorManager();

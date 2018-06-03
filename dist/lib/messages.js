@@ -1,12 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const AuthHandler = require("./auth");
-const connector_1 = require("./connector");
-function startConnectorManager() {
-    connector_1.connectorManager.addConnectors();
-}
-exports.startConnectorManager = startConnectorManager;
+const server_1 = require("./server");
 function sendMessage(token, network, options, callback) {
+    const bfmbServer = server_1.BFMBServer.sharedInstance;
     // RPC token verification
     AuthHandler.verifyToken(token, function (err, decoded) {
         if (err) {
@@ -17,7 +14,7 @@ function sendMessage(token, network, options, callback) {
             let connectionIndex = tokenHasNetwork(network, decoded.networks);
             if (connectionIndex > -1) {
                 // Get connector
-                let connector = connector_1.connectorManager.getConnector(network);
+                let connector = bfmbServer.getConnectorManager().getConnector(network);
                 if (connector) {
                     connector.sendMessage(decoded.connections[connectionIndex], options, function (err, response) {
                         if (err) {
@@ -40,6 +37,7 @@ function sendMessage(token, network, options, callback) {
 }
 exports.sendMessage = sendMessage;
 function receiveMessage(token, network, options, callback) {
+    const bfmbServer = server_1.BFMBServer.sharedInstance;
     AuthHandler.verifyToken(token, function (err, decoded) {
         if (err) {
             return callback({ code: 399, message: "Auth error. -> " + err.message });
@@ -47,7 +45,7 @@ function receiveMessage(token, network, options, callback) {
         else {
             let connectionIndex = tokenHasNetwork(network, decoded.networks);
             if (connectionIndex > -1) {
-                let connector = connector_1.connectorManager.getConnector(network);
+                let connector = bfmbServer.getConnectorManager().getConnector(network);
                 if (connector) {
                     connector.receiveMessage(decoded.connections[connectionIndex], options, function (err, response) {
                         if (err) {
