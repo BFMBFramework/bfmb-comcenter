@@ -10,16 +10,66 @@ import * as AuthHandler from "./lib/auth";
 import * as MessageHandler from "./lib/messages";
 
 class BFMBServer {
+	private static _instance : BFMBServer;
+
 	private jayson : any;
-	private events : MongoEvents;
+	private mongoEvents : MongoEvents;
 
 	constructor() {
-		this.events = new MongoEvents();
+		this.mongoEvents = new MongoEvents();
+	}
+
+	static get sharedInstance() : BFMBServer {
+		return this._instance || (this._instance = new BFMBServer());
 	}
 
 	startServer() : void {
 		this.welcomeMessage();
 		this.prepareMongoConnection();
+	}
+
+	createJaysonServer() : void {
+		this.jayson = jayson.server({
+			authenticate : AuthHandler.authenticate,
+			sendMessage : MessageHandler.sendMessage,
+			receiveMessage : MessageHandler.receiveMessage
+		}, {
+			collect: false
+		});
+	}
+
+	configureJaysonServer() : void {
+		for (let elem of config.servers) {
+			logger.info("Raising " + elem.type + " server on port " + elem.port);
+			switch (elem.type) {
+			case "tcp":
+				this.jayson.tcp().listen(elem.port);
+				break;
+			case "http":
+				this.jayson.http().listen(elem.port);
+				break;
+			case "tls":
+				if (elem.cert && elem.key) {
+					this.jayson.tls({
+						cert: fs.readFileSync(elem.cert),
+						key: fs.readFileSync(elem.key)
+					}).listen(elem.port);
+				} else {
+					logger.error("Can't raise " + elem.type + " server. No certificates.");
+				}
+				break;
+			case "https":
+				if (elem.cert && elem.key) {
+					this.jayson.https({
+						cert: fs.readFileSync(elem.cert),
+						key: fs.readFileSync(elem.key)
+					}).listen(elem.port);
+				} else {
+					logger.error("Can't raise " + elem.type + " server. No certificates.");
+				}
+				break;
+			}
+		}
 	}
 
 	private welcomeMessage() : void {
@@ -30,62 +80,22 @@ class BFMBServer {
 		// Connection to mongodb
 		logger.info("Connecting to MongoDB...");
 		mongoose.connect(config.db);
-		mongoose.connection.on("connected", this.events.success);
-		mongoose.connection.on("error", this.events.error);
-		mongoose.connection.on("disconnected", this.events.disconnected);
-		process.on("SIGINT", this.events.close);
+		mongoose.connection.on("connected", this.mongoEvents.success);
+		mongoose.connection.on("error", this.mongoEvents.error);
+		mongoose.connection.on("disconnected", this.mongoEvents.disconnected);
+		process.on("SIGINT", this.mongoEvents.close);
 	}
 }
 
 class MongoEvents {
 	success() : void {
-		let server;
+		const bfmbServer = BFMBServer.sharedInstance;
 		
 		logger.info("Connected to MongoDB database");
-
 		logger.info("Attaching connectors to Connector Manager");
 		MessageHandler.startConnectorManager();
-
-		// create a server
-		server = jayson.server({
-			authenticate : AuthHandler.authenticate,
-			sendMessage : MessageHandler.sendMessage,
-			receiveMessage : MessageHandler.receiveMessage
-		}, {
-			collect: false
-		});
-
-		for (let elem of config.servers) {
-			logger.info("Raising " + elem.type + " server on port " + elem.port);
-			switch (elem.type) {
-			case "tcp":
-				server.tcp().listen(elem.port);
-				break;
-			case "http":
-				server.http().listen(elem.port);
-				break;
-			case "tls":
-				if (elem.cert && elem.key) {
-					server.tls({
-						cert: fs.readFileSync(elem.cert),
-						key: fs.readFileSync(elem.key)
-					}).listen(elem.port);
-				} else {
-					logger.error("Can't raise " + elem.type + " server. No certificates.");
-				}
-				break;
-			case "https":
-				if (elem.cert && elem.key) {
-					server.https({
-						cert: fs.readFileSync(elem.cert),
-						key: fs.readFileSync(elem.key)
-					}).listen(elem.port);
-				} else {
-					logger.error("Can't raise " + elem.type + " server. No certificates.");
-				}
-				break;
-			}
-		}
+		bfmbServer.createJaysonServer();
+		bfmbServer.configureJaysonServer();		
 	}
 
 	error(err : Error) : void {
@@ -105,7 +115,7 @@ class MongoEvents {
 }
 
 function main() : void {
-	const bfmbServer = new BFMBServer();
+	const bfmbServer = BFMBServer.sharedInstance;
 	bfmbServer.startServer();
 }
 
