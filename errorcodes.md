@@ -1,5 +1,9 @@
 # Error codes in ComCenter communication.
 
+## Generic errors
+
+* 100: Error in parameters.
+
 ## Authentication
 
 * 300: User not found.

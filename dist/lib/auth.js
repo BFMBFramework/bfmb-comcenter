@@ -7,28 +7,49 @@ const user_1 = require("../schemas/user");
 const logger_1 = require("./logger");
 const config_1 = require("./config");
 const server_1 = require("./server");
-function authenticate(username, password, callback) {
-    user_1.User.findOne({
-        name: username
-    })
-        .populate({ path: "networks", model: network_1.Network })
-        .exec(function (err, user) {
-        if (err)
-            throw err;
-        if (!user) {
-            // User not found.
-            logger_1.logger.debug("User " + username + " not found.");
-            return callback({ code: 300, message: "User " + username + " not found." });
+class AuthHandler {
+    addUserConnection(network, callback) {
+        const bfmbServer = server_1.BFMBServer.sharedInstance;
+        const connector = bfmbServer.getConnectorManager().getConnector(network.name);
+        if (connector) {
+            connector.addConnection({ token: network.token }, function (err, id) {
+                if (err) {
+                    logger_1.logger.debug("Auth error adding connection: " + err.message);
+                    return callback(null, null);
+                }
+                else {
+                    return callback(null, id);
+                }
+            });
         }
         else {
-            // Checking password match
-            if (user.password != password) {
-                logger_1.logger.debug("Password for user " + username + "does not match with password saved.");
-                return callback({ code: 301, message: "Password for user " + username + " is not correct." });
+            return callback(null, null);
+        }
+    }
+    /**
+    args: { username: string, password: string }
+    */
+    authenticate(args, callback) {
+        const authHandler = server_1.BFMBServer.sharedInstance.getAuthHandler();
+        if (!args.username || !args.password) {
+            return callback({ code: 100, message: "Params provided are not { username, password }" });
+        }
+        user_1.User.findOne({
+            name: args.username
+        })
+            .populate({ path: "networks", model: network_1.Network })
+            .exec(function (err, user) {
+            if (err)
+                throw err;
+            if (!user) {
+                return callback({ code: 300, message: "User " + args.username + " not found." });
+            }
+            if (user.password !== args.password) {
+                return callback({ code: 301, message: "Incorrect password." });
             }
             else {
                 // Creating connections
-                async_1.concat(user.networks, addUserConnection, function (err, ids) {
+                async_1.concat(user.networks, authHandler.addUserConnection, function (err, ids) {
                     // Creating payload and generating token for user
                     const payload = {
                         networks: user.networks,
@@ -42,63 +63,44 @@ function authenticate(username, password, callback) {
                     return callback(null, token);
                 });
             }
+        });
+    }
+    verifyToken(token, callback) {
+        const authHandler = server_1.BFMBServer.sharedInstance.getAuthHandler();
+        if (token) {
+            jwt.verify(token, config_1.config.secret, { algorithms: ["HS512"] }, function (err, decoded) {
+                if (err) {
+                    authHandler.closeOldTokenConnections(token);
+                    return callback(err);
+                }
+                else {
+                    return callback(null, decoded);
+                }
+            });
         }
-    });
-}
-exports.authenticate = authenticate;
-function addUserConnection(network, callback) {
-    const bfmbServer = server_1.BFMBServer.sharedInstance;
-    const connector = bfmbServer.getConnectorManager().getConnector(network.name);
-    if (connector) {
-        connector.addConnection({ token: network.token }, function (err, id) {
-            if (err) {
-                logger_1.logger.debug("Auth error adding connection: " + err.message);
-                return callback(null, null);
-            }
-            else {
-                return callback(null, id);
-            }
-        });
+        else {
+            return callback(new Error("Token not found."));
+        }
     }
-    else {
-        return callback(null, null);
-    }
-}
-function verifyToken(token, callback) {
-    if (token) {
-        jwt.verify(token, config_1.config.secret, { algorithms: ["HS512"] }, function (err, decoded) {
-            if (err) {
-                closeOldTokenConnections(token);
-                return callback(err);
-            }
-            else {
-                return callback(null, decoded);
-            }
-        });
-    }
-    else {
-        return callback(new Error("Token not found."));
-    }
-}
-exports.verifyToken = verifyToken;
-function closeOldTokenConnections(token) {
-    const bfmbServer = server_1.BFMBServer.sharedInstance;
-    if (token) {
-        let decoded = jwt.decode(token);
-        let payload = decoded.payload;
-        for (let i = 0; i < payload.networks.length; i++) {
-            let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
-            if (connector && payload.connections[i]) {
-                connector.removeConnection(payload.connections[i], function (err) {
-                    if (err) {
-                        logger_1.logger.error(err.message);
-                    }
-                    else {
-                        logger_1.logger.debug("Connection closed: (" + payload.networks[i].name + ", " + payload.connections[i] + ")");
-                    }
-                });
+    closeOldTokenConnections(token) {
+        const bfmbServer = server_1.BFMBServer.sharedInstance;
+        if (token) {
+            let decoded = jwt.decode(token);
+            let payload = decoded.payload;
+            for (let i = 0; i < payload.networks.length; i++) {
+                let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
+                if (connector && payload.connections[i]) {
+                    connector.removeConnection(payload.connections[i], function (err) {
+                        if (err) {
+                            logger_1.logger.error(err.message);
+                        }
+                        else {
+                            logger_1.logger.debug("Connection closed: (" + payload.networks[i].name + ", " + payload.connections[i] + ")");
+                        }
+                    });
+                }
             }
         }
     }
 }
-exports.closeOldTokenConnections = closeOldTokenConnections;
+exports.AuthHandler = AuthHandler;

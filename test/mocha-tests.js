@@ -10,6 +10,17 @@ var client = new jayson.client.tcp({
 var token;
 
 describe('Authentication', function() {
+	it('Gives an error if client sends an incorrect password', function(done) {
+		client.request('authenticate', {username: "TEST", password: "0000"}, function(err, response) {
+			if (!response.error) {
+				const errMes = new Error("No error provided.");
+				done(errMes);
+			} else {
+				done();
+			}
+		})
+	})
+
 	it('Gives a result (jsonwebtoken) if client logged with valid user', function(done) {
 		client.request('authenticate', {username: "TEST", password: "test"}, function(err, response) {
 			if (!response.result) {

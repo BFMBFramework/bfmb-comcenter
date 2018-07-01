@@ -8,12 +8,14 @@ const config_1 = require("./config");
 const package_1 = require("./package");
 const mongoevents_1 = require("./mongoevents");
 const connector_1 = require("./connector");
-const AuthHandler = require("./auth");
-const MessageHandler = require("./messages");
+const auth_1 = require("./auth");
+const messages_1 = require("./messages");
 class BFMBServer {
     constructor() {
         this.mongoEvents = new mongoevents_1.MongoEvents();
         this.connectorManager = new connector_1.ConnectorManager();
+        this.authHandler = new auth_1.AuthHandler();
+        this.messageHandler = new messages_1.MessageHandler();
     }
     static get sharedInstance() {
         return this._instance || (this._instance = new BFMBServer());
@@ -27,11 +29,11 @@ class BFMBServer {
     }
     createJaysonServer() {
         this.jayson = jayson.server({
-            authenticate: AuthHandler.authenticate,
-            sendMessage: MessageHandler.sendMessage,
-            receiveMessage: MessageHandler.receiveMessage
+            authenticate: this.authHandler.authenticate,
+            sendMessage: this.messageHandler.sendMessage,
+            receiveMessage: this.messageHandler.receiveMessage
         }, {
-            collect: false
+            collect: true
         });
     }
     configureJaysonServer() {
@@ -71,6 +73,12 @@ class BFMBServer {
     }
     getConnectorManager() {
         return this.connectorManager;
+    }
+    getAuthHandler() {
+        return this.authHandler;
+    }
+    getMessageHandler() {
+        return this.messageHandler;
     }
     welcomeMessage() {
         logger_1.logger.info("Welcome to BFMB ComCenter " + package_1.packageData.version);

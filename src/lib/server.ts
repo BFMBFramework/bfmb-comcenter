@@ -8,9 +8,8 @@ import { packageData } from "./package";
 
 import { MongoEvents } from "./mongoevents";
 import { ConnectorManager } from "./connector";
-
-import * as AuthHandler from "./auth";
-import * as MessageHandler from "./messages";
+import { AuthHandler } from "./auth";
+import { MessageHandler } from "./messages";
 
 export class BFMBServer {
 	private static _instance : BFMBServer;
@@ -18,10 +17,14 @@ export class BFMBServer {
 	private jayson : any;
 	private mongoEvents : MongoEvents;
 	private connectorManager : ConnectorManager;
+	private authHandler : AuthHandler;
+	private messageHandler : MessageHandler;
 
 	constructor() {
 		this.mongoEvents = new MongoEvents();
 		this.connectorManager = new ConnectorManager();
+		this.authHandler = new AuthHandler();
+		this.messageHandler = new MessageHandler();
 	}
 
 	static get sharedInstance() : BFMBServer {
@@ -39,11 +42,12 @@ export class BFMBServer {
 
 	createJaysonServer() : void {
 		this.jayson = jayson.server({
-			authenticate : AuthHandler.authenticate,
-			sendMessage : MessageHandler.sendMessage,
-			receiveMessage : MessageHandler.receiveMessage
-		}, {
-			collect: false
+			authenticate : this.authHandler.authenticate,
+			sendMessage : this.messageHandler.sendMessage,
+			receiveMessage : this.messageHandler.receiveMessage
+		},
+		{
+			collect: true
 		});
 	}
 
@@ -83,6 +87,14 @@ export class BFMBServer {
 
 	getConnectorManager() : ConnectorManager {
 		return this.connectorManager;
+	}
+
+	getAuthHandler() : AuthHandler {
+		return this.authHandler;
+	}
+
+	getMessageHandler() : MessageHandler {
+		return this.messageHandler;
 	}
 
 	private welcomeMessage() : void {
