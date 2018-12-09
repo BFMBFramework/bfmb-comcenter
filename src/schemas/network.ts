@@ -5,7 +5,9 @@ export interface INetworkModel extends INetwork, Document {}
 
 export const NetworkSchema : Schema = new Schema({
 	name: String,
-	token: String
+	token: String,
+	username: String,
+	password: String
 });
 
 export const Network : Model<INetworkModel> = model<INetworkModel>("Network", NetworkSchema);

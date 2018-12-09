@@ -84,7 +84,7 @@ describe('Telegram communication', function(done) {
 		client.request('receiveMessage', {token: token, network: 'Telegram', options: {}}, function (err, response) {
 			if (!response.result) {
 				const errMes = new Error(JSON.stringify(response.error));
-				done(errMes)
+				done(errMes);
 			} else {
 				for (let i = response.result.length - 1; i >= 0; i--) {
 					if (response.result[i].message.text === "/testMessages") {
@@ -108,4 +108,17 @@ describe('Telegram communication', function(done) {
 			}
 		})
 	}).timeout(10000);
+});
+
+describe('Tado communication', function(done) {
+	it('Test Tado', function(done) {
+		client.request('sendMessage', {token: token, network: 'Tado', options: {}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				done();
+			}
+		});
+	})
 });

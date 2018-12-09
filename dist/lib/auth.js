@@ -12,7 +12,11 @@ class AuthHandler {
         const bfmbServer = server_1.BFMBServer.sharedInstance;
         const connector = bfmbServer.getConnectorManager().getConnector(network.name);
         if (connector) {
-            connector.addConnection({ token: network.token }, function (err, id) {
+            connector.addConnection({
+                token: network.token,
+                username: network.username,
+                password: network.password
+            }, function (err, id) {
                 if (err) {
                     logger_1.logger.debug("Auth error adding connection: " + err.message);
                     return callback(null, null);

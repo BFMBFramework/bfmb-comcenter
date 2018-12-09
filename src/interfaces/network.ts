@@ -1,4 +1,6 @@
 export interface INetwork {
 	name?: String,
-	token?: String
+	token?: String,
+	username?: String,
+	password?: String
 }
