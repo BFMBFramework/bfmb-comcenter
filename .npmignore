@@ -4,3 +4,5 @@ src/
 gulpfile.js
 sources.md
 tsconfig.json
+comcenter.log
+package-lock.json

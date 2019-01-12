@@ -16,3 +16,4 @@
 * 400: Network param isn't in user's network list.
 * 401: Network module isn't activated.
 * 402: Incorrect network API params.
+* 499: Other error related with messages.
