@@ -44,7 +44,7 @@ export class AuthHandler {
 		}
 
 		User.findOne({
-			name: args.username
+			username: args.username
 		})
 		.populate({ path: "networks", model: Network})
 		.exec( function (err, user : IUserModel) {
@@ -53,7 +53,7 @@ export class AuthHandler {
 				return callback({code: 300, message: "User " + args.username + " not found."});
 			}
 
-			if (user.password !== args.password) {
+			if (!user.verifyPasswordSync(args.password)) {
 				return callback({code: 301, message: "Incorrect password."});
 			} else {
 

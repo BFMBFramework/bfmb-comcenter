@@ -1,5 +1,7 @@
 export interface IUser {
-	name?: String,
-	password?: String,
+	name?: string,
+	password?: string,
 	networks?: any
+
+	verifyPasswordSync(password: string): boolean
 }

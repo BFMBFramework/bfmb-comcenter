@@ -39,7 +39,7 @@ class AuthHandler {
             return callback({ code: 100, message: "Params provided are not { username, password }" });
         }
         user_1.User.findOne({
-            name: args.username
+            username: args.username
         })
             .populate({ path: "networks", model: network_1.Network })
             .exec(function (err, user) {
@@ -48,7 +48,7 @@ class AuthHandler {
             if (!user) {
                 return callback({ code: 300, message: "User " + args.username + " not found." });
             }
-            if (user.password !== args.password) {
+            if (!user.verifyPasswordSync(args.password)) {
                 return callback({ code: 301, message: "Incorrect password." });
             }
             else {

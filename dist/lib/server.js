@@ -86,7 +86,7 @@ class BFMBServer {
     prepareMongoConnection() {
         // Connection to mongodb
         logger_1.logger.info("Connecting to MongoDB...");
-        mongoose.connect(config_1.config.db, { useNewUrlParser: true });
+        mongoose.connect(config_1.config.db.url, { useNewUrlParser: true });
         mongoose.connection.on("connected", this.mongoEvents.success);
         mongoose.connection.on("error", this.mongoEvents.error);
         mongoose.connection.on("disconnected", this.mongoEvents.disconnected);
