@@ -121,4 +121,17 @@ describe('Tado communication', function(done) {
 			}
 		});
 	})
+
+
+	it('Test Tado Get Me', function(done) {
+		client.request('getMe', {token: token, network: 'Tado', options: {}}, function(err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(response);
+				done();
+			}
+		});
+	}).timeout(10000);
 });

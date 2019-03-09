@@ -42,9 +42,10 @@ export class BFMBServer {
 
 	createJaysonServer() : void {
 		this.jayson = jayson.server({
-			authenticate : this.authHandler.authenticate,
-			sendMessage : this.messageHandler.sendMessage,
-			receiveMessage : this.messageHandler.receiveMessage
+			authenticate: this.authHandler.authenticate,
+			getMe: this.messageHandler.getMe,
+			sendMessage: this.messageHandler.sendMessage,
+			receiveMessage: this.messageHandler.receiveMessage
 		},
 		{
 			collect: true

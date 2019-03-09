@@ -16,6 +16,8 @@ declare module 'bfmb-base-connector' {
 
 		removeConnection(id : string, callback : Function) : void;
 
+		abstract getMe(id: string, options: any, callback: Function): void;
+
 		abstract receiveMessage(id : string, options : any, callback : Function) : void;
 
 		abstract sendMessage(id : string, options : any, callback : Function) : void;
