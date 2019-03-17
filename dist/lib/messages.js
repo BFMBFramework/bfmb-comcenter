@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const logger_1 = require("./logger");
+const util = require("util");
 const server_1 = require("./server");
 class MessageHandler {
     /**
@@ -21,7 +22,10 @@ class MessageHandler {
                 if (connectionIndex > -1) {
                     // Get connector
                     let connector = bfmbServer.getConnectorManager().getConnector(args.network);
-                    logger_1.logger.log('debug', 'Connector has this data: ' + JSON.stringify(connector, null, 4));
+                    logger_1.logger.log('debug', 'Connector has this data: ');
+                    logger_1.logger.log('debug', util.inspect(connector, false, null, true));
+                    logger_1.logger.log('debug', 'Decoded has this data: ');
+                    logger_1.logger.log('debug', util.inspect(decoded, false, null, true));
                     if (connector) {
                         connector.getMe(decoded.connections[connectionIndex], args.options, function (err, response) {
                             if (err) {

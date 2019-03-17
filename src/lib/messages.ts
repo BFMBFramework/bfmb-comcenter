@@ -1,5 +1,6 @@
 import {logger} from "./logger";
 import {config} from "./config";
+import * as util from "util";
 
 import { BFMBServer } from "./server";
 
@@ -24,7 +25,10 @@ export class MessageHandler {
 				if (connectionIndex > -1) {
 					// Get connector
 					let connector = bfmbServer.getConnectorManager().getConnector(args.network);
-					logger.log('debug', 'Connector has this data: ' + JSON.stringify(connector, null, 4));
+					logger.log('debug', 'Connector has this data: ');
+					logger.log('debug', util.inspect(connector, false, null, true));
+					logger.log('debug', 'Decoded has this data: ');
+					logger.log('debug', util.inspect(decoded, false, null, true));
 					if (connector) {
 						connector.getMe(decoded.connections[connectionIndex], args.options, function (err : Error, response : any) {
 							if (err) {
