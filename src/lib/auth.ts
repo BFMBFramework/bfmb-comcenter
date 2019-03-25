@@ -65,9 +65,9 @@ export class AuthHandler {
 						connections: ids
 					};
 
-					let token = jwt.sign(payload, config.secret, {
-						algorithm: "HS512",
-						expiresIn: "24h"
+					let token = jwt.sign(payload, config.tokenConfig.secret, {
+						algorithm: config.tokenConfig.algorithm,
+						expiresIn: config.tokenConfig.expiresIn
 					});
 
 					logger.debug("Sending token to user...");
@@ -83,7 +83,7 @@ export class AuthHandler {
 		const authHandler = BFMBServer.sharedInstance.getAuthHandler();
 
 		if (token) {
-			jwt.verify(token, config.secret,{algorithms: ["HS512"]},function (err : Error, decoded : string) {
+			jwt.verify(token, config.tokenConfig.secret, { algorithms: [config.tokenConfig.algorithm] },function (err : Error, decoded : string) {
 				if (err) {
 					authHandler.closeOldTokenConnections(token);
 					return callback(err);

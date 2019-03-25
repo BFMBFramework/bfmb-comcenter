@@ -4,7 +4,11 @@
 		"encKey": "yfbmTM8/lZAH8H6PkGTcyK0H1bMk4kl0ovwq1xhX75w=",
 		"signKey": "q8N6L+Lo345JsnUlSow4sPlKzo+XRJPYjT2Uq7mhlOkSi5kFkX0UoIY3etfm4UxtNHaM8xaX2HtkAhV7Gye0KA=="
 	},
-	"secret": "W]5!>v$@NV!bgk8T?{$vP~o'^9P}S1",
+	"tokenConfig": {
+		"secret": "W]5!>v$@NV!bgk8T?{$vP~o'^9P}S1",
+		"algorithm": "HS512",
+		"expiresIn": "24h"
+	},
 	"servers": [
 		{
 			"type": "tcp",
