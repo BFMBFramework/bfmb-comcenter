@@ -142,7 +142,7 @@ describe('Tado communication', function(done) {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
-				console.log(util.inspect(err, false, null, true));
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
@@ -154,7 +154,31 @@ describe('Tado communication', function(done) {
 				const errMes = new Error(JSON.stringify(response.error));
 				done(errMes);
 			} else {
-				console.log(util.inspect(err, false, null, true));
+				console.log(util.inspect(response, false, null, true));
+				done();
+			}
+		});
+	});
+
+	it('GetWeather has to return data with home_id and api_method set.', function(done) {
+		client.request('receiveMessage', {token: token, network: 'Tado', options: {api_method: "getWeather", home_id: 181335}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(util.inspect(response, false, null, true));
+				done();
+			}
+		});
+	});
+
+	it('GetZones has to return data with home_id and api_method set.', function(done) {
+		client.request('receiveMessage', {token: token, network: 'Tado', options: {api_method: "getZones", home_id: 181335}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
