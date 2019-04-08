@@ -183,4 +183,28 @@ describe('Tado communication', function(done) {
 			}
 		});
 	});
+
+	it('GetZoneState has to return data with home_id, zone_id and api_method set.', function(done) {
+		client.request('receiveMessage', {token: token, network: 'Tado', options: {api_method: "getZoneState", home_id: 181335, zone_id: 1}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(util.inspect(response, false, null, true));
+				done();
+			}
+		});
+	});
+
+	it('GetZoneOverlay has to return data with home_id, zone_id and api_method set.', function(done) {
+		client.request('receiveMessage', {token: token, network: 'Tado', options: {api_method: "getZoneOverlay", home_id: 181335, zone_id: 1}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(util.inspect(response, false, null, true));
+				done();
+			}
+		});
+	});
 });
