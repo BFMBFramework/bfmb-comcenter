@@ -17,6 +17,7 @@ describe('Authentication', function() {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		})
@@ -29,6 +30,7 @@ describe('Authentication', function() {
 				done(errMes);
 			} else {
 				token = response.result;
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
@@ -40,6 +42,7 @@ describe('Authentication', function() {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
@@ -53,6 +56,7 @@ describe('Sending messages', function() {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
@@ -63,6 +67,7 @@ describe('Sending messages', function() {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		});
@@ -76,6 +81,7 @@ describe('Telegram communication', function(done) {
 				const errMes = new Error('No error was returned.');
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				done();
 			}
 		})
@@ -87,23 +93,26 @@ describe('Telegram communication', function(done) {
 				const errMes = new Error(JSON.stringify(response.error));
 				done(errMes);
 			} else {
+				console.log(util.inspect(response, false, null, true));
 				for (let i = response.result.length - 1; i >= 0; i--) {
-					if (response.result[i].message.text === "/testMessages") {
-						const username = response.result[i].message.from.username;
-						const chatid = response.result[i].message.chat.id;
-						const options = {
-							chat_id: chatid,
-							text: "Hello " + username + ". This is a programmed test."
-						};
+					if (response.result[i].message) {
+						if (response.result[i].message.text === "/testMessages") {
+							const username = response.result[i].message.from.username;
+							const chatid = response.result[i].message.chat.id;
+							const options = {
+								chat_id: chatid,
+								text: "Hello " + username + ". This is a programmed test."
+							};
 
-						client.request('sendMessage', {token: token, network: 'Telegram', options: options}, function (err, response) {
-							if (!response.result) {
-								const errMes = new Error(JSON.stringify(response.error));
-								done(errMes);
-							} else {
-								done();
-							}
-						});
+							client.request('sendMessage', {token: token, network: 'Telegram', options: options}, function (err, response) {
+								if (!response.result) {
+									const errMes = new Error(JSON.stringify(response.error));
+									done(errMes);
+								} else {
+									done();
+								}
+							});
+						}
 					}
 				}
 			}
