@@ -216,4 +216,18 @@ describe('Tado communication', function(done) {
 			}
 		});
 	});
+
+	it('SetZoneOverlay has to return result with home_id, zone_id, temperature and duration.', function(done) {
+		client.request('sendMessage', {token: token, network: 'Tado',
+		 options: {api_method: "setZoneOverlay", home_id: 181335, power: "on", zone_id: 1, temperature: 25, termination: 1800}}, function (err, response) {
+			if (!response.result) {
+				const errMes = new Error(JSON.stringify(response.error));
+				done(errMes);
+			} else {
+				console.log(util.inspect(response, false, null, true));
+				done();
+			}
+		});
+	});
+
 });
