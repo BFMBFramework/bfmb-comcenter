@@ -94,17 +94,17 @@
 					<div class="tsd-signature tsd-kind-icon">User<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Model</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/_schemas_user_.iusermodel.html" class="tsd-signature-type">IUserModel</a><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol"> =&nbsp;model&lt;IUserModel&gt;(&quot;User&quot;, UserSchema)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/BFMBFramework/ComCenter/blob/2f5b046/src/schemas/user.ts#L31">schemas/user.ts:31</a></li>
+							<li>Defined in <a href="https://github.com/BFMBFramework/ComCenter/blob/af01c54/src/schemas/user.ts#L23">schemas/user.ts:23</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-variable tsd-parent-kind-external-module">
 					<a name="userschema" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> User<wbr>Schema</h3>
-					<div class="tsd-signature tsd-kind-icon">User<wbr>Schema<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Schema</span><span class="tsd-signature-symbol"> =&nbsp;new Schema({createdAt: Date,username: {type: String,required: true},password: {type: String,required: true,bcrypt: true},networks: [{ type: Schema.Types.ObjectId, ref: &quot;Network&quot;}]})</span></div>
+					<div class="tsd-signature tsd-kind-icon">User<wbr>Schema<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Schema</span><span class="tsd-signature-symbol"> =&nbsp;new Schema({createdAt: { type: Date, default: new Date() },username: {type: String,required: true},password: {type: String,required: true,bcrypt: true},networks: [{ type: Schema.Types.ObjectId, ref: &quot;Network&quot;}]})</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/BFMBFramework/ComCenter/blob/2f5b046/src/schemas/user.ts#L7">schemas/user.ts:7</a></li>
+							<li>Defined in <a href="https://github.com/BFMBFramework/ComCenter/blob/af01c54/src/schemas/user.ts#L7">schemas/user.ts:7</a></li>
 						</ul>
 					</aside>
 				</section>

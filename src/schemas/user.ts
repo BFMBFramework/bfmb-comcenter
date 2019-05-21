@@ -5,7 +5,7 @@ import { IUser } from "../interfaces/user";
 export interface IUserModel extends IUser, Document {}
 
 export const UserSchema: Schema = new Schema({
-	createdAt: Date,
+	createdAt: { type: Date, default: new Date() },
 	username: {
 		type: String,
 		required: true
@@ -16,14 +16,6 @@ export const UserSchema: Schema = new Schema({
 		bcrypt: true
 	},
 	networks: [{ type: Schema.Types.ObjectId, ref: "Network"}]
-});
-
-UserSchema.pre("save", (next) => {
-	let now = new Date();
-	if (!this.createdAt) {
-		this.createdAt = now;
-	}
-	next();
 });
 
 UserSchema.plugin(MongooseBcrypt, { rounds: 8 });

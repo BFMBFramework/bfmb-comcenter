@@ -9,7 +9,7 @@
     "build": "gulp",
     "clean": "rm -rf ./dist",
     "rebuild": "npm run clean && npm run build",
-    "gendocs": "typedoc --out ./docs ./src"
+    "gendocs": "typedoc --out ./docs ./src; touch ./docs/.nojekyll"
   },
   "repository": {
     "type": "git",
