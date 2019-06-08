@@ -71,6 +71,7 @@ export class AuthHandler {
 					});
 
 					logger.debug("Sending token to user...");
+					logger.debug("TOKEN:" + token);
 					return callback(null, token);
 				});
 				

@@ -64,6 +64,7 @@ class AuthHandler {
                         expiresIn: config_1.config.tokenConfig.expiresIn
                     });
                     logger_1.logger.debug("Sending token to user...");
+                    logger_1.logger.debug("TOKEN:" + token);
                     return callback(null, token);
                 });
             }
