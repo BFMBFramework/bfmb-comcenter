@@ -122,7 +122,7 @@ export class MessageHandler {
 
 	private tokenHasNetwork (network : string, networks : Array<any>) : number {
 		for(let i = 0; i < networks.length; i++) {
-			if(networks[i].name === network) {
+			if(networks[i] === network) {
 				return i;
 			}
 		}

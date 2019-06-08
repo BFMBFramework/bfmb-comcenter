@@ -123,7 +123,7 @@ class MessageHandler {
     }
     tokenHasNetwork(network, networks) {
         for (let i = 0; i < networks.length; i++) {
-            if (networks[i].name === network) {
+            if (networks[i] === network) {
                 return i;
             }
         }

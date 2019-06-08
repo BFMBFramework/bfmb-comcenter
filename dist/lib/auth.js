@@ -30,6 +30,12 @@ class AuthHandler {
             return callback(null, null);
         }
     }
+    stripSensitiveNetworkData(networks) {
+        let strippedNetworks = networks.map(function (network) {
+            return network.name;
+        });
+        return strippedNetworks;
+    }
     /**
     args: { username: string, password: string }
     */
@@ -56,7 +62,7 @@ class AuthHandler {
                 async_1.concat(user.networks, authHandler.addUserConnection, function (err, ids) {
                     // Creating payload and generating token for user
                     const payload = {
-                        networks: user.networks,
+                        networks: authHandler.stripSensitiveNetworkData(user.networks),
                         connections: ids
                     };
                     let token = jwt.sign(payload, config_1.config.tokenConfig.secret, {

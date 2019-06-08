@@ -33,6 +33,13 @@ export class AuthHandler {
 		}
 	}
 
+	private stripSensitiveNetworkData(networks: Array<any>): Array<any> {
+		let strippedNetworks = networks.map(function(network: any) {
+			return network.name;
+		});
+		return strippedNetworks;
+	}
+
 	/**
 	args: { username: string, password: string }
 	*/
@@ -61,7 +68,7 @@ export class AuthHandler {
 				concat(user.networks, authHandler.addUserConnection, function(err : Error, ids : Array<string>) {
 					// Creating payload and generating token for user
 					const payload = {
-						networks: user.networks,
+						networks: authHandler.stripSensitiveNetworkData(user.networks),
 						connections: ids
 					};
 
