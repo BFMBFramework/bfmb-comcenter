@@ -12,8 +12,6 @@ import { AuthHandler } from "./auth";
 import { MessageHandler } from "./messages";
 
 export class BFMBServer {
-	private static _instance : BFMBServer;
-
 	private jayson : any;
 	private mongoEvents : MongoEvents;
 	private connectorManager : ConnectorManager;
@@ -21,14 +19,10 @@ export class BFMBServer {
 	private messageHandler : MessageHandler;
 
 	constructor() {
-		this.mongoEvents = new MongoEvents();
+		this.mongoEvents = new MongoEvents(this);
 		this.connectorManager = new ConnectorManager();
-		this.authHandler = new AuthHandler();
-		this.messageHandler = new MessageHandler();
-	}
-
-	static get sharedInstance() : BFMBServer {
-		return this._instance || (this._instance = new BFMBServer());
+		this.authHandler = new AuthHandler(this);
+		this.messageHandler = new MessageHandler(this);
 	}
 
 	startServer() : void {
@@ -41,15 +35,26 @@ export class BFMBServer {
 	}
 
 	createJaysonServer() : void {
-		this.jayson = jayson.server({
-			authenticate: this.authHandler.authenticate,
-			getMe: this.messageHandler.getMe,
-			sendMessage: this.messageHandler.sendMessage,
-			receiveMessage: this.messageHandler.receiveMessage
-		},
-		{
-			collect: true
-		});
+		const self: BFMBServer = this;
+		this.jayson = jayson.server(
+			{
+				authenticate: function(args: any, callback: Function) {
+					self.authHandler.authenticate(args, callback);
+				},
+				getMe: function(args: any, callback: Function) {
+					self.messageHandler.getMe(args, callback);
+				},
+				sendMessage: function(args: any, callback: Function) {
+					self.messageHandler.sendMessage(args, callback);
+				},
+				receiveMessage: function(args: any, callback: Function) {
+					self.messageHandler.receiveMessage(args, callback);
+				}
+			},
+			{
+				collect: true
+			}
+		);
 	}
 
 	configureJaysonServer() : void {
@@ -104,9 +109,13 @@ export class BFMBServer {
 
 	private prepareMongoConnection() : void {
 		// Connection to mongodb
+		const server: BFMBServer = this;
 		logger.info("Connecting to MongoDB...");
 		mongoose.connect(config.db.url, { useNewUrlParser: true });
-		mongoose.connection.on("connected", this.mongoEvents.success);
+		mongoose.connection.on("connected", function(args: any[]) {
+			logger.info("Connection successful.");
+			server.mongoEvents.success();
+		});
 		mongoose.connection.on("error", this.mongoEvents.error);
 		mongoose.connection.on("disconnected", this.mongoEvents.disconnected);
 		process.on("SIGINT", this.mongoEvents.close);

@@ -5,14 +5,18 @@ import { logger } from "./logger";
 import { BFMBServer } from "./server";
 
 export class MongoEvents {
+	private server: BFMBServer;
+
+	constructor(server: BFMBServer) {
+		this.server = server;
+	}
+
 	success() : void {
-		const bfmbServer = BFMBServer.sharedInstance;
-		
 		logger.info("Connected to MongoDB database");
 		logger.info("Attaching connectors to Connector Manager");
-		bfmbServer.startConnectorManager();
-		bfmbServer.createJaysonServer();
-		bfmbServer.configureJaysonServer();		
+		this.server.startConnectorManager();
+		this.server.createJaysonServer();
+		this.server.configureJaysonServer();
 	}
 
 	error(err : Error) : void {

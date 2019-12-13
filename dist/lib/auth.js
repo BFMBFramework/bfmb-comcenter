@@ -6,11 +6,12 @@ const network_1 = require("../schemas/network");
 const user_1 = require("../schemas/user");
 const logger_1 = require("./logger");
 const config_1 = require("./config");
-const server_1 = require("./server");
 class AuthHandler {
+    constructor(server) {
+        this.server = server;
+    }
     addUserConnection(network, callback) {
-        const bfmbServer = server_1.BFMBServer.sharedInstance;
-        const connector = bfmbServer.getConnectorManager().getConnector(network.name);
+        const connector = this.server.getConnectorManager().getConnector(network.name);
         if (connector) {
             connector.addConnection({
                 token: network.token,
@@ -40,7 +41,7 @@ class AuthHandler {
     args: { username: string, password: string }
     */
     authenticate(args, callback) {
-        const authHandler = server_1.BFMBServer.sharedInstance.getAuthHandler();
+        const self = this;
         if (!args.username || !args.password) {
             return callback({ code: 100, message: "Params provided are not { username, password }" });
         }
@@ -59,10 +60,12 @@ class AuthHandler {
             }
             else {
                 // Creating connections
-                async_1.concat(user.networks, authHandler.addUserConnection, function (err, ids) {
+                async_1.concat(user.networks, function (network, callback) {
+                    self.addUserConnection(network, callback);
+                }, function (err, ids) {
                     // Creating payload and generating token for user
                     const payload = {
-                        networks: authHandler.stripSensitiveNetworkData(user.networks),
+                        networks: self.stripSensitiveNetworkData(user.networks),
                         connections: ids
                     };
                     let token = jwt.sign(payload, config_1.config.tokenConfig.secret, {
@@ -77,11 +80,11 @@ class AuthHandler {
         });
     }
     verifyToken(token, callback) {
-        const authHandler = server_1.BFMBServer.sharedInstance.getAuthHandler();
+        const self = this;
         if (token) {
             jwt.verify(token, config_1.config.tokenConfig.secret, { algorithms: [config_1.config.tokenConfig.algorithm] }, function (err, decoded) {
                 if (err) {
-                    authHandler.closeOldTokenConnections(token);
+                    self.closeOldTokenConnections(token);
                     return callback(err);
                 }
                 else {
@@ -94,12 +97,11 @@ class AuthHandler {
         }
     }
     closeOldTokenConnections(token) {
-        const bfmbServer = server_1.BFMBServer.sharedInstance;
         if (token) {
             let decoded = jwt.decode(token);
             let payload = decoded.payload;
             for (let i = 0; i < payload.networks.length; i++) {
-                let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
+                let connector = this.server.getConnectorManager().getConnector(payload.networks[i].name);
                 if (connector && payload.connections[i]) {
                     connector.removeConnection(payload.connections[i], function (err) {
                         if (err) {

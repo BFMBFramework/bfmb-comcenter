@@ -1,8 +1,8 @@
 import * as jwt from "jsonwebtoken";
-import {concat} from "async";
+import { concat } from "async";
 
-import {INetworkModel, Network} from "../schemas/network";
-import {IUserModel, User} from "../schemas/user";
+import { INetworkModel, Network } from "../schemas/network";
+import { IUserModel, User } from "../schemas/user";
 
 import { logger } from "./logger";
 import { config } from "./config";
@@ -10,17 +10,21 @@ import { config } from "./config";
 import { BFMBServer } from "./server";
 
 export class AuthHandler {
+	private server: BFMBServer;
 
-	private addUserConnection(network : any, callback : Function) {
-		const bfmbServer = BFMBServer.sharedInstance;
-		const connector = bfmbServer.getConnectorManager().getConnector(network.name);
+	constructor(server: BFMBServer) {
+		this.server = server;
+	}
+
+	private addUserConnection(network: any, callback: Function) {
+		const connector = this.server.getConnectorManager().getConnector(network.name);
 
 		if (connector) {
 			connector.addConnection({
 				token: network.token,
 				username: network.username,
 				password: network.password
-			}, function (err : Error, id : string) {
+			}, function (err: Error, id: string) {
 				if (err) {
 					logger.debug("Auth error adding connection: " + err.message);
 					return callback(null, null);
@@ -34,7 +38,7 @@ export class AuthHandler {
 	}
 
 	private stripSensitiveNetworkData(networks: Array<any>): Array<any> {
-		let strippedNetworks = networks.map(function(network: any) {
+		let strippedNetworks = networks.map(function (network: any) {
 			return network.name;
 		});
 		return strippedNetworks;
@@ -43,57 +47,59 @@ export class AuthHandler {
 	/**
 	args: { username: string, password: string }
 	*/
-	authenticate(args : any, callback : Function) {
-		const authHandler = BFMBServer.sharedInstance.getAuthHandler();
-
+	authenticate(args: any, callback: Function) {
+		const self: AuthHandler = this;
 		if (!args.username || !args.password) {
-			return callback({code: 100, message: "Params provided are not { username, password }"});
+			return callback({ code: 100, message: "Params provided are not { username, password }" });
 		}
 
 		User.findOne({
 			username: args.username
 		})
-		.populate({ path: "networks", model: Network})
-		.exec( function (err, user : IUserModel) {
-			if (err) throw err;
-			if (!user) {
-				return callback({code: 300, message: "User " + args.username + " not found."});
-			}
+			.populate({ path: "networks", model: Network })
+			.exec(function (err, user: IUserModel) {
+				if (err) throw err;
+				if (!user) {
+					return callback({ code: 300, message: "User " + args.username + " not found." });
+				}
 
-			if (!user.verifyPasswordSync(args.password)) {
-				return callback({code: 301, message: "Incorrect password."});
-			} else {
+				if (!user.verifyPasswordSync(args.password)) {
+					return callback({ code: 301, message: "Incorrect password." });
+				} else {
 
-				// Creating connections
-				concat(user.networks, authHandler.addUserConnection, function(err : Error, ids : Array<string>) {
-					// Creating payload and generating token for user
-					const payload = {
-						networks: authHandler.stripSensitiveNetworkData(user.networks),
-						connections: ids
-					};
+					// Creating connections
+					concat(
+						user.networks,
+						function (network: any, callback: Function) {
+							self.addUserConnection(network, callback);
+						},
+						function (err: Error, ids: Array<string>) {
+							// Creating payload and generating token for user
+							const payload = {
+								networks: self.stripSensitiveNetworkData(user.networks),
+								connections: ids
+							};
 
-					let token = jwt.sign(payload, config.tokenConfig.secret, {
-						algorithm: config.tokenConfig.algorithm,
-						expiresIn: config.tokenConfig.expiresIn
-					});
+							let token = jwt.sign(payload, config.tokenConfig.secret, {
+								algorithm: config.tokenConfig.algorithm,
+								expiresIn: config.tokenConfig.expiresIn
+							});
 
-					logger.debug("Sending token to user...");
-					logger.debug("TOKEN:" + token);
-					return callback(null, token);
-				});
-				
-			}
-
-		});
+							logger.debug("Sending token to user...");
+							logger.debug("TOKEN:" + token);
+							return callback(null, token);
+						}
+					);
+				}
+			});
 	}
 
-	verifyToken(token : string, callback : Function) {
-		const authHandler = BFMBServer.sharedInstance.getAuthHandler();
-
+	verifyToken(token: string, callback: Function) {
+		const self: AuthHandler = this;
 		if (token) {
-			jwt.verify(token, config.tokenConfig.secret, { algorithms: [config.tokenConfig.algorithm] },function (err : Error, decoded : string) {
+			jwt.verify(token, config.tokenConfig.secret, { algorithms: [config.tokenConfig.algorithm] }, function (err: Error, decoded: string) {
 				if (err) {
-					authHandler.closeOldTokenConnections(token);
+					self.closeOldTokenConnections(token);
 					return callback(err);
 				} else {
 					return callback(null, decoded);
@@ -104,16 +110,14 @@ export class AuthHandler {
 		}
 	}
 
-	closeOldTokenConnections(token : string) {
-		const bfmbServer = BFMBServer.sharedInstance;
-
+	closeOldTokenConnections(token: string) {
 		if (token) {
-			let decoded : any = jwt.decode(token);
-			let payload : any = decoded.payload;
+			let decoded: any = jwt.decode(token);
+			let payload: any = decoded.payload;
 			for (let i = 0; i < payload.networks.length; i++) {
-				let connector = bfmbServer.getConnectorManager().getConnector(payload.networks[i].name);
+				let connector = this.server.getConnectorManager().getConnector(payload.networks[i].name);
 				if (connector && payload.connections[i]) {
-					connector.removeConnection(payload.connections[i], function (err : Error) {
+					connector.removeConnection(payload.connections[i], function (err: Error) {
 						if (err) {
 							logger.error(err.message);
 						} else {

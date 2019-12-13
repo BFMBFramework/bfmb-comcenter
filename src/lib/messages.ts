@@ -5,26 +5,30 @@ import * as util from "util";
 import { BFMBServer } from "./server";
 
 export class MessageHandler {
+	private server: BFMBServer;
+
+	constructor(server: BFMBServer) {
+		this.server = server;
+	}
 
 	/**
 	args: { token: string, network: string, options: any }
 	*/
 	getMe(args: any, callback: Function) {
-		const bfmbServer = BFMBServer.sharedInstance;
-
+		const self: MessageHandler = this;
 		if (!args.token || !args.network || !args.options) {
 			return callback({code: 100, message: 'Params provided are not { token, network, Object }'});
 		}
 
-		bfmbServer.getAuthHandler().verifyToken(args.token, function(err: Error, decoded: any) {
+		self.server.getAuthHandler().verifyToken(args.token, function(err: Error, decoded: any) {
 			if (err) {
 				return callback({code: 399, message: "Auth error. -> " + err.message});
 			} else {
 				// Check if network selected is configured for this user
-				let connectionIndex = bfmbServer.getMessageHandler().tokenHasNetwork(args.network, decoded.networks)
+				let connectionIndex = self.server.getMessageHandler().tokenHasNetwork(args.network, decoded.networks)
 				if (connectionIndex > -1) {
 					// Get connector
-					let connector = bfmbServer.getConnectorManager().getConnector(args.network);
+					let connector = self.server.getConnectorManager().getConnector(args.network);
 					logger.log('debug', 'Connector has this data: ');
 					logger.log('debug', util.inspect(connector, false, null, true));
 					logger.log('debug', 'Decoded has this data: ');
@@ -51,22 +55,21 @@ export class MessageHandler {
 	args: { token : string, network : string, options : any }
 	*/
 	sendMessage(args : any, callback : Function) {
-		const bfmbServer = BFMBServer.sharedInstance;
-
+		const self: MessageHandler = this;
 		if(!args.token || !args.network || !args.options) {
 			return callback({code: 100, message: 'Params provided are not { token, network, Object }'});
 		}
 
 		// RPC token verification
-		bfmbServer.getAuthHandler().verifyToken(args.token, function (err : Error, decoded : any) {
+		self.server.getAuthHandler().verifyToken(args.token, function (err : Error, decoded : any) {
 			if (err) {
 				return callback({code: 399, message: "Auth error. -> " + err.message});
 			} else {
 				// Check if network selected is configured for this user
-				let connectionIndex = bfmbServer.getMessageHandler().tokenHasNetwork(args.network, decoded.networks)
+				let connectionIndex = self.server.getMessageHandler().tokenHasNetwork(args.network, decoded.networks)
 				if (connectionIndex > -1) {
 					// Get connector
-					let connector = bfmbServer.getConnectorManager().getConnector(args.network);
+					let connector = self.server.getConnectorManager().getConnector(args.network);
 					if (connector) {
 						connector.sendMessage(decoded.connections[connectionIndex], args.options, function (err : Error, response : any) {
 							if (err) {
@@ -89,19 +92,18 @@ export class MessageHandler {
 	args: { token: string, network: string, options: any }
 	*/
 	receiveMessage (args : any, callback : Function) {
-		const bfmbServer = BFMBServer.sharedInstance;
-
+		const self: MessageHandler = this;
 		if(!args.token || !args.network || !args.options) {
 			return callback({code: 100, message: 'Params provided are not { token, network, Object }'});
 		}
 
-		bfmbServer.getAuthHandler().verifyToken(args.token, function (err : Error, decoded : any) {
+		self.server.getAuthHandler().verifyToken(args.token, function (err : Error, decoded : any) {
 			if (err) {
 				return callback({code: 399, message: "Auth error. -> " + err.message});
 			} else {
-				let connectionIndex = bfmbServer.getMessageHandler().tokenHasNetwork(args.network, decoded.networks);
+				let connectionIndex = self.server.getMessageHandler().tokenHasNetwork(args.network, decoded.networks);
 				if (connectionIndex > -1) {
-					let connector = bfmbServer.getConnectorManager().getConnector(args.network);
+					let connector = self.server.getConnectorManager().getConnector(args.network);
 					if (connector) {
 						connector.receiveMessage(decoded.connections[connectionIndex], args.options, function (err : Error, response : any) {
 							if (err) {
@@ -126,7 +128,6 @@ export class MessageHandler {
 				return i;
 			}
 		}
-
 		return -1;
 	}
 }

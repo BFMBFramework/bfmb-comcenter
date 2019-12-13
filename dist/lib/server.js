@@ -12,13 +12,10 @@ const auth_1 = require("./auth");
 const messages_1 = require("./messages");
 class BFMBServer {
     constructor() {
-        this.mongoEvents = new mongoevents_1.MongoEvents();
+        this.mongoEvents = new mongoevents_1.MongoEvents(this);
         this.connectorManager = new connector_1.ConnectorManager();
-        this.authHandler = new auth_1.AuthHandler();
-        this.messageHandler = new messages_1.MessageHandler();
-    }
-    static get sharedInstance() {
-        return this._instance || (this._instance = new BFMBServer());
+        this.authHandler = new auth_1.AuthHandler(this);
+        this.messageHandler = new messages_1.MessageHandler(this);
     }
     startServer() {
         this.welcomeMessage();
@@ -28,11 +25,20 @@ class BFMBServer {
         this.connectorManager.addConnectors();
     }
     createJaysonServer() {
+        const self = this;
         this.jayson = jayson.server({
-            authenticate: this.authHandler.authenticate,
-            getMe: this.messageHandler.getMe,
-            sendMessage: this.messageHandler.sendMessage,
-            receiveMessage: this.messageHandler.receiveMessage
+            authenticate: function (args, callback) {
+                self.authHandler.authenticate(args, callback);
+            },
+            getMe: function (args, callback) {
+                self.messageHandler.getMe(args, callback);
+            },
+            sendMessage: function (args, callback) {
+                self.messageHandler.sendMessage(args, callback);
+            },
+            receiveMessage: function (args, callback) {
+                self.messageHandler.receiveMessage(args, callback);
+            }
         }, {
             collect: true
         });
@@ -86,9 +92,13 @@ class BFMBServer {
     }
     prepareMongoConnection() {
         // Connection to mongodb
+        const server = this;
         logger_1.logger.info("Connecting to MongoDB...");
         mongoose.connect(config_1.config.db.url, { useNewUrlParser: true });
-        mongoose.connection.on("connected", this.mongoEvents.success);
+        mongoose.connection.on("connected", function (args) {
+            logger_1.logger.info("Connection successful.");
+            server.mongoEvents.success();
+        });
         mongoose.connection.on("error", this.mongoEvents.error);
         mongoose.connection.on("disconnected", this.mongoEvents.disconnected);
         process.on("SIGINT", this.mongoEvents.close);
