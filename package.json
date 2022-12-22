@@ -32,7 +32,7 @@
     "bfmb-tado-connector": "^0.4.0",
     "bfmb-telegram-connector": "^0.5.0",
     "jayson": "^3.0.2",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "mongoose": "^5.5.13",
     "mongoose-bcrypt": "^1.6.0",
     "mongoose-encryption": "^2.0.2",
