@@ -48,7 +48,7 @@
     "@types/winston": "^2.4.4",
     "gulp": "^4.0.2",
     "gulp-typescript": "^5.0.1",
-    "mocha": "^6.1.4",
+    "mocha": "^10.2.0",
     "typescript": "^3.5.1"
   }
 }
